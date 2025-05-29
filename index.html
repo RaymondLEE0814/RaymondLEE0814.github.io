@@ -1,1 +1,339 @@
-hiohi
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구축 아파트 투자 동향 및 시장 분석 (2015-2025)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; /* Defaulting to Inter as per guidelines, assuming Korean characters render well */ }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px; /* Base height */
+            max-height: 400px;
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .korean-title { font-family: 'Noto Sans KR', sans-serif; } /* Example of a specific Korean font if needed and available */
+        .stat-number {
+            font-size: 3rem; /* Tailwind text-6xl */
+            font-weight: bold; /* Tailwind font-bold */
+            color: #14B8A6; /* Teal */
+        }
+        .flowchart-step {
+            border: 2px solid #14B8A6; /* Teal border */
+            background-color: #F0FDFA; /* Light Teal bg */
+            color: #0F766E; /* Darker Teal text */
+        }
+        .flowchart-arrow {
+            font-size: 2rem;
+            color: #F59E0B; /* Amber */
+            margin: 0 0.5rem;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <header class="bg-teal-600 text-white p-6 shadow-md sticky top-0 z-50">
+        <h1 class="text-3xl font-bold text-center korean-title">구축 아파트 투자 동향 및 시장 분석 (2015-2025)</h1>
+        <p class="text-center text-teal-100 mt-1">자산 격차 시대, 현명한 구축 아파트 투자 전략</p>
+    </header>
+
+    <main class="p-4 md:p-8">
+
+        <section class="bg-white rounded-lg shadow-xl p-6 mb-8 text-center">
+            <h2 class="text-2xl font-bold text-teal-700 mb-3 korean-title">"좋은 구축 아파트를 산다는 건, 다음 기회를 잡는다는 뜻"</h2>
+            <p class="text-lg text-slate-700 leading-relaxed">
+                지난 10년간 아파트 시장은 자산 가치에 있어 큰 변화를 겪었습니다. 특히 가격대별 아파트의 수익률 차이는 '자산 격차'를 심화시키는 주요 원인이 되었습니다. 본 인포그래픽은 전국 주요 도시의 구축 아파트 시장 동향을 '5분위 배율' 지표를 통해 분석하고, 성공적인 투자 전략 수립에 필요한 정보를 제공합니다.
+            </p>
+        </section>
+
+        <section id="seoul_analysis" class="bg-white rounded-lg shadow-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold text-teal-700 mb-4 text-center korean-title">서울: 극명한 자산 격차의 현주소</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-700 mb-2">5분위 배율이란?</h3>
+                    <p class="text-slate-600 mb-4">한 지역의 아파트를 가격순으로 5등분하여, 최상위 20% (5분위) 아파트 평균 가격이 최하위 20% (1분위) 아파트 평균 가격의 몇 배인지를 나타내는 지표입니다. 이 배율이 클수록 가격 격차가 크다는 의미입니다.</p>
+                    <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 rounded-md">
+                        <p class="font-bold">서울의 5분위 배율 변화 (2015년 → 2025년)</p>
+                        <p class="text-2xl"><span class="font-semibold">4.5배</span> <span class="mx-2">➡️</span> <span class="font-semibold text-red-600">11.2배</span></p>
+                        <p class="text-sm mt-1">10년 만에 상하위 가격 격차가 약 2.5배 더 벌어졌습니다.</p>
+                    </div>
+                     <p class="mt-4 text-slate-600">
+                        서울에서 지난 10년간(2015.03 ~ 2025.03) 분위별 아파트 평균 가격 변화는 다음과 같습니다. 5분위 아파트는 약 15억 원의 이익을 본 반면, 1분위 아파트는 약 500만 원의 손해를 보았습니다. 이러한 차이는 올바른 투자 선택의 중요성을 극명하게 보여줍니다.
+                        <br><br><strong>현실적인 진입 및 상급지 도약을 위한 발판은 3분위부터 고려</strong>하는 것이 좋다는 분석입니다.
+                    </p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="seoulQuintileChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 text-center korean-title">전국 주요 도시별 아파트 시장 분석 (2015-2025)</h2>
+            <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">각 도시의 지난 10년간 분위별 아파트 평균 매매가격 변화와 5분위 배율 변화를 통해 시장 동향을 파악하고, 보고서에서 제시하는 현실적인 투자 진입선을 확인하세요. (수익/손실 단위: 만원)</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="cityChartsContainer">
+                </div>
+        </section>
+        
+        <section class="bg-white rounded-lg shadow-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold text-teal-700 mb-6 text-center korean-title">성공적인 구축 아파트 투자를 위한 핵심 전략</h2>
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">
+                단순히 저렴한 매물을 찾는 것보다, 미래 가치를 보고 전략적으로 접근하는 것이 중요합니다. 다음은 보고서에서 강조하는 핵심 투자 단계입니다.
+            </p>
+            <div class="flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0 md:space-x-4">
+                <div class="flowchart-step p-4 rounded-lg text-center shadow-md w-full md:w-1/5">
+                    <div class="text-4xl mb-2">📍</div>
+                    <h3 class="font-semibold text-lg">1. 입지 우선</h3>
+                    <p class="text-sm">교통, 학군, 편의시설 등 핵심 입지 요건 확인</p>
+                </div>
+                <div class="flowchart-arrow hidden md:block">➡️</div>
+                <div class="flowchart-step p-4 rounded-lg text-center shadow-md w-full md:w-1/5">
+                    <div class="text-4xl mb-2">🎯</div>
+                    <h3 class="font-semibold text-lg">2. 목표 분위 선정</h3>
+                    <p class="text-sm">지역별 현실적 진입선 및 성장 잠재력 고려</p>
+                </div>
+                <div class="flowchart-arrow hidden md:block">➡️</div>
+                 <div class="flowchart-step p-4 rounded-lg text-center shadow-md w-full md:w-1/5">
+                    <div class="text-4xl mb-2">🏘️</div>
+                    <h3 class="font-semibold text-lg">3. 수요 확인</h3>
+                    <p class="text-sm">대단지, 거래량, 환금성 높은 매물 중심</p>
+                </div>
+                <div class="flowchart-arrow hidden md:block">➡️</div>
+                <div class="flowchart-step p-4 rounded-lg text-center shadow-md w-full md:w-1/5">
+                    <div class="text-4xl mb-2">🛠️</div>
+                    <h3 class="font-semibold text-lg">4. 가성비 인테리어</h3>
+                    <p class="text-sm">매도 가치 높이는 실용적, 대중적 인테리어</p>
+                </div>
+                <div class="flowchart-arrow hidden md:block">➡️</div>
+                <div class="flowchart-step p-4 rounded-lg text-center shadow-md w-full md:w-1/5">
+                    <div class="text-4xl mb-2">📈</div>
+                    <h3 class="font-semibold text-lg">5. 성공적 매도</h3>
+                    <p class="text-sm">적정 시점 판단, 다음 투자 단계로 이동</p>
+                </div>
+            </div>
+            <p class="mt-8 text-center text-slate-700 bg-teal-50 p-4 rounded-md border border-teal-200">
+                <strong>핵심:</strong> '팔기 쉬운 집'은 입지 선정이 우선입니다. 인테리어는 그 다음, 매도 가치를 높이는 전략적 요소입니다.
+            </p>
+        </section>
+
+        <section class="text-center py-8">
+            <h2 class="text-3xl font-bold text-teal-700 mb-4 korean-title">결론: 다음 기회를 잡아라!</h2>
+            <p class="text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed mb-6">
+                아파트 시장의 자산 격차는 앞으로도 중요한 화두가 될 것입니다. 제공된 데이터를 바탕으로 시장을 이해하고, 전략적인 구축 아파트 투자를 통해 더 나은 미래와 '다음 기회'를 만들어 가시길 바랍니다. 이 인포그래픽이 여러분의 현명한 의사결정에 도움이 되기를 기대합니다.
+            </p>
+            <a href="#seoul_analysis" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300">
+                주요 도시 분석 다시보기
+            </a>
+        </section>
+    </main>
+
+    <footer class="text-center p-4 bg-slate-800 text-slate-300 text-sm">
+        <p>&copy; 2025 Guchuk Apt Investment Analysis. Data based on "구축아파트 1권_프롤로그" PDF.</p>
+        <p>This infographic is for informational purposes only and does not constitute financial advice.</p>
+    </footer>
+
+<script>
+// Chart.js Global Configuration for Tooltips (handles multiline labels)
+const globalTooltipConfig = {
+    callbacks: {
+        title: function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        },
+        label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+                label += ': ';
+            }
+            if (context.parsed.y !== null) {
+                label += context.parsed.y.toLocaleString() + '만원';
+            }
+            return label;
+        }
+    }
+};
+
+// Function to create a quintile bar chart
+function createQuintileChart(canvasId, chartLabel, dataValues, backgroundColor, borderColor) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['5분위 (최상위)', '4분위', '3분위', '2분위', '1분위 (최하위)'],
+            datasets: [{
+                label: chartLabel,
+                data: dataValues, // Profits/Losses in 만원
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '10년간 평균 가격 변화 (만원)'
+                    },
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return value.toLocaleString() + '만';
+                        }
+                    }
+                },
+                x: {
+                     title: {
+                        display: true,
+                        text: '가격 분위'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: globalTooltipConfig,
+                legend: {
+                    display: true,
+                    position: 'top',
+                }
+            }
+        }
+    });
+}
+
+// Data for charts (Profits/Losses in 만원 for 10 years)
+// 1억 = 10000만원, 1천만원 = 1000만원, 1백만원 = 100만원
+const cityData = [
+    {
+        name: "경기 (수도권)",
+        id: "gyeonggi",
+        profits: [93000, 29000, 16000, 7000, -700], // 9억3천, 2억9천, 1억6천, 7천, -7백
+        ratioChange: "4.4배 ➡️ <span class='text-red-600'>10.9배</span>",
+        entryPoint: "3분위부터 현실적 진입선"
+    },
+    {
+        name: "인천",
+        id: "incheon",
+        profits: [36000, 17000, 8400, 270, -2000], // 3억6천, 1억7천, 8천4백, 270, -2천
+        ratioChange: "3.3배 ➡️ <span class='text-red-600'>8.2배</span>",
+        entryPoint: "4분위부터 현실적 진입선"
+    },
+    {
+        name: "부산",
+        id: "busan",
+        profits: [33000, 14000, 4700, 400, -1100], // 3억3천, 1억4천, 4천7백, 4백, -1천1백
+        ratioChange: "4.3배 ➡️ <span class='text-red-600'>8.7배</span>",
+        entryPoint: "4분위부터 현실적 진입선"
+    },
+    {
+        name: "대구",
+        id: "daegu",
+        profits: [34000, 11500, 6100, 2200, 500], // 3억4천, 1억1천5백, 6천1백, 2천2백, 5백
+        ratioChange: "3.6배 ➡️ <span class='text-red-600'>6.3배</span>",
+        entryPoint: "4분위부터 현실적 진입선"
+    },
+    {
+        name: "대전",
+        id: "daejeon",
+        profits: [44000, 20000, 12000, 5600, 660], // 4억4천, 2억, 1억2천, 5천6백, 660
+        ratioChange: "3.6배 ➡️ <span class='text-red-600'>7.6배</span>",
+        entryPoint: "4분위부터 현실적 진입선"
+    },
+    {
+        name: "광주",
+        id: "gwangju",
+        profits: [25000, 16000, 9500, 5100, 2300], // 2억5천, 1억6천, 9천5백, 5천1백, 2천3백
+        ratioChange: "4.2배 ➡️ <span class='text-red-600'>5.7배</span>",
+        entryPoint: "4분위부터 현실적 진입선"
+    },
+    {
+        name: "울산",
+        id: "ulsan",
+        profits: [29000, 14800, 8300, 1700, -2000], // 2억9천, 1억4천8백, 8천3백, 1천7백, -2천
+        ratioChange: "3.3배 ➡️ <span class='text-red-600'>7.3배</span>",
+        entryPoint: "4분위부터 현실적 진입선"
+    },
+     {
+        name: "기타지방",
+        id: "otherlocal",
+        profits: [22000, 8000, 3000, 500, -740], // 2억2천, 8천, 3천, 5백, -740
+        ratioChange: "4.7배 ➡️ <span class='text-red-600'>7.8배</span>",
+        entryPoint: "5분위 아니면 타지역 투자 고려"
+    }
+];
+
+// Seoul Chart (Separate due to detailed intro text)
+createQuintileChart(
+    'seoulQuintileChart',
+    '서울시 분위별 10년 수익/손실',
+    [150000, 51000, 27000, 8657, -500], // 15억, 5억1천, 2억7천, 약 9천 (8657만), -5백만
+    ['#065F46', '#047857', '#059669', '#10B981', '#34D399', '#6EE7B7'].reverse(), // Shades of Teal for positive
+    ['#064E3B', '#065F46', '#047857', '#059669', '#10B981'].reverse()
+);
+
+
+// Dynamically create city charts
+const container = document.getElementById('cityChartsContainer');
+const baseColorsPositive = ['rgba(20, 184, 166, 0.7)', 'rgba(20, 184, 166, 0.6)', 'rgba(20, 184, 166, 0.5)', 'rgba(20, 184, 166, 0.4)', 'rgba(20, 184, 166, 0.3)'];
+const baseColorsNegative = ['rgba(245, 158, 11, 0.7)', 'rgba(245, 158, 11, 0.6)', 'rgba(245, 158, 11, 0.5)', 'rgba(245, 158, 11, 0.4)', 'rgba(245, 158, 11, 0.3)']; // Amber for negative
+const borderColorsPositive = 'rgba(13, 148, 136, 1)';
+const borderColorsNegative = 'rgba(217, 119, 6, 1)';
+
+cityData.forEach(city => {
+    const card = `
+        <div class="bg-white rounded-lg shadow-lg p-4 transform hover:scale-105 transition-transform duration-300">
+            <h3 class="text-xl font-bold text-teal-700 mb-1 text-center korean-title">${city.name}</h3>
+            <p class="text-sm text-center text-slate-500 mb-1">5분위 배율: ${city.ratioChange}</p>
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="${city.id}QuintileChart"></canvas>
+            </div>
+            <p class="mt-3 text-center text-sm font-semibold bg-amber-100 text-amber-800 p-2 rounded-md">권장 진입선: ${city.entryPoint}</p>
+        </div>
+    `;
+    container.innerHTML += card;
+});
+
+// After adding all cards to DOM, initialize charts
+cityData.forEach(city => {
+    const chartColors = city.profits.map(p => p >= 0 ? baseColorsPositive[city.profits.indexOf(p) % baseColorsPositive.length] : baseColorsNegative[city.profits.indexOf(p) % baseColorsNegative.length]);
+    const chartBorderColors = city.profits.map(p => p >=0 ? borderColorsPositive : borderColorsNegative);
+
+    // Ensure distinct colors for each bar if using single color array
+    const backgroundColors = city.profits.map((profit, index) => {
+        // Use a slightly different shade for each bar or based on value
+        const baseColor = profit >= 0 ? '20, 184, 166' : '245, 158, 11'; // Teal for positive, Amber for negative
+        const opacity = 0.5 + (index * 0.1); // Vary opacity slightly
+        return `rgba(${baseColor}, ${Math.min(opacity, 0.8)})`;
+    });
+     const borderColors = city.profits.map(profit => profit >= 0 ? 'rgb(13, 148, 136)' : 'rgb(217, 119, 6)');
+
+
+    createQuintileChart(
+        `${city.id}QuintileChart`,
+        `${city.name} 분위별 10년 수익/손실`,
+        city.profits,
+        backgroundColors,
+        borderColors
+    );
+});
+
+</script>
+</body>
+</html>
