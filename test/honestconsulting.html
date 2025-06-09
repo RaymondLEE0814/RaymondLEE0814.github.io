@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: Calm Academia (Warm Neutrals with Soft Blue accent) -->
+    <!-- Application Structure Plan: The SPA is designed as a user-centric dashboard, guiding users from a high-level overview to specific details. The flow is: 1. "Key Changes At-a-Glance" to immediately address users' primary questions via interactive cards. 2. "3-Year vs. 12-Year Guide" for a direct, side-by-side comparison of the two main admission tracks, a common point of confusion. 3. "University Deep Dive" where users can click on a university to open a modal with detailed, structured information including evaluation ratios visualized with a donut chart. 4. "Future Outlook & Strategy" providing actionable advice and future predictions. This structure transforms a dense report into a task-oriented, exploratory experience, prioritizing clarity and user discovery over the report's linear format. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Key changes for 2026. Goal: Inform. Viz: Interactive HTML cards. Justification: Allows users to quickly grasp the most critical updates without being overwhelmed. Method: HTML/CSS/JS.
+        - Report Info: 3-Year vs 12-Year requirements. Goal: Compare. Viz: Two-column layout with icons and a summary table. Justification: Facilitates direct comparison of complex requirements. Method: HTML/CSS.
+        - Report Info: University-specific admission process (e.g., Yonsei's 70% document, 30% interview). Goal: Inform/Compare. Viz: Donut Chart within a modal. Justification: Visually represents the weight of each evaluation factor for quick comprehension. Library: Chart.js (Canvas).
+        - Report Info: University comparison data. Goal: Organize. Viz: Clickable grid of university names triggering a modal. Justification: Provides a clean, organized entry point to detailed information, preventing clutter on the main page. Method: HTML/CSS/JS.
+        - Report Info: Future strategies. Goal: Inform. Viz: Styled list in a card. Justification: Presents actionable advice in a clear, easy-to-digest format. Method: HTML/CSS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <title>2026학년도 제외국민 특례입학 분석 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F8F7F4; /* Warm Neutral Background */
+            color: #3C3633; /* Dark Brown-Gray Text */
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 200px;
+            margin: auto;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button.active {
+            border-bottom-color: #748DA6; /* Soft Blue Accent */
+            color: #3C3633;
+            font-weight: 700;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-3">2026학년도 제외국민 특례입학</h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-[#748DA6]">심층 분석 및 전략 대시보드</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-4">
+                복잡한 특례입학 전형의 핵심 변화를 한눈에 파악하고, 대학별 맞춤 전략을 탐색하여 합격의 길을 여세요.
+            </p>
+        </header>
+
+        <section id="key-changes" class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-8">핵심 변경사항 한눈에 보기</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-3">📄</div>
+                    <h4 class="font-bold text-xl mb-2">서류평가 중심 전환</h4>
+                    <p class="text-gray-600 text-sm">다수 대학이 지필고사를 폐지하고 서류 100% 전형으로 전환하여, 학교생활기록부와 표준화학력자료(IB, AP 등)의 중요성이 더욱 커졌습니다.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-3">🗣️</div>
+                    <h4 class="font-bold text-xl mb-2">면접 비중 조정</h4>
+                    <p class="text-gray-600 text-sm">연세대 등 일부 상위권 대학에서 면접 비중을 축소하며, 서류의 정성적 평가와 진위 확인을 위한 보조 수단으로 활용하는 경향이 나타납니다.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-3">🔬</div>
+                    <h4 class="font-bold text-xl mb-2">의학계열 모집 변화</h4>
+                    <p class="text-gray-600 text-sm">이화여대, 가톨릭관동대 등 일부 대학에서 의대/약대 모집을 확대하며, 서류 및 MMI 면접을 통한 심층 평가를 도입합니다.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-3">♾️</div>
+                    <h4 class="font-bold text-xl mb-2">12년 특례 지원 제한 폐지</h4>
+                    <p class="text-gray-600 text-sm">기존 6개 대학 지원 제한이 폐지되어 지원 기회는 확대되었으나, 인기 학과의 실질 경쟁률 상승으로 이어질 수 있습니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="type-guide" class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-8">전형 유형별 완벽 가이드: 3년 vs 12년 특례</h3>
+            <div class="card p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-2xl font-bold mb-4 text-[#748DA6]">3년 특례 (중·고교 과정)</h4>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start"><span class="text-xl mr-3">👨‍👩‍👧‍👦</span> <div><strong class="font-bold">부모 자격 필수:</strong> 부모 중 1인 이상이 해외에서 통산 3년 이상 근무/사업. 학생 재학 기간 중 2/3 이상 해외 체류.</div></li>
+                            <li class="flex items-start"><span class="text-xl mr-3">🏫</span> <div><strong class="font-bold">학생 학업 요건:</strong> 고교 1년을 포함하여 중·고교 3년 이상 해외 이수.</div></li>
+                            <li class="flex items-start"><span class="text-xl mr-3">✈️</span> <div><strong class="font-bold">학생 체류 요건:</strong> 각 학년 기간의 3/4 이상 해외 체류.</div></li>
+                             <li class="flex items-start"><span class="text-xl mr-3">🗂️</span> <div><strong class="font-bold">제출 서류:</strong> 학력 서류 외 부모의 해외 경제 활동 증빙 서류 필수.</div></li>
+                            <li class="flex items-start"><span class="text-xl mr-3">6️⃣</span> <div><strong class="font-bold">지원 제한:</strong> 수시 6회 지원 제한에 포함.</div></li>
+                        </ul>
+                    </div>
+                    <div class="border-t md:border-t-0 md:border-l border-gray-200 pt-8 md:pt-0 md:pl-8">
+                        <h4 class="text-2xl font-bold mb-4 text-[#748DA6]">12년 특례 (전 교육과정)</h4>
+                        <ul class="space-y-3 text-gray-700">
+                             <li class="flex items-start"><span class="text-xl mr-3">👨‍👩‍👧‍👦</span> <div><strong class="font-bold">부모 자격 불필요:</strong> 부모의 해외 근무나 동반 체류 여부가 지원 자격에 영향을 미치지 않음.</div></li>
+                            <li class="flex items-start"><span class="text-xl mr-3">🏫</span> <div><strong class="font-bold">학생 학업 요건:</strong> 초·중·고 전 교육과정(12년) 해외 이수.</div></li>
+                            <li class="flex items-start"><span class="text-xl mr-3">✈️</span> <div><strong class="font-bold">학생 체류 요건:</strong> 학업 기간 외 방학 등 국내 체류 인정.</div></li>
+                             <li class="flex items-start"><span class="text-xl mr-3">🗂️</span> <div><strong class="font-bold">제출 서류:</strong> 학생 본인의 학력 및 출입국 관련 서류 중심.</div></li>
+                            <li class="flex items-start"><span class="text-xl mr-3">♾️</span> <div><strong class="font-bold">지원 제한:</strong> 지원 대학 수 제한 없음.</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="university-comparison" class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-2">주요 대학별 심층 비교 분석</h3>
+            <p class="text-center text-gray-600 mb-8">관심 있는 대학을 클릭하여 2026학년도 전형 방식을 확인하세요.</p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <!-- University buttons will be inserted here by JS -->
+            </div>
+        </section>
+
+        <section id="strategy">
+             <h3 class="text-2xl font-bold text-center mb-8">미래 전망 및 합격 전략</h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="card p-8">
+                     <h4 class="text-xl font-bold mb-4">📈 향후 5년간 입시 트렌드 예측</h4>
+                     <ul class="space-y-3 list-disc list-inside text-gray-700">
+                         <li><strong class="font-bold">서류 정성평가 심화:</strong> '진정성'과 '전공 적합성'이 핵심. 학생의 성장 과정과 잠재력을 보여주는 서류가 중요해집니다.</li>
+                         <li><strong class="font-bold">첨단분야 인재 선호:</strong> 반도체, AI, 에너지 등 국가 전략 산업 관련 학과에서 특례 선발이 확대될 전망입니다.</li>
+                         <li><strong class="font-bold">학령인구 감소의 역설:</strong> 국내 정원 충원이 어려워지면서, 오히려 우수한 해외 인재를 유치하려는 대학들의 경쟁이 심화될 수 있습니다.</li>
+                     </ul>
+                 </div>
+                 <div class="card p-8">
+                     <h4 class="text-xl font-bold mb-4">🎯 수험생/학부모 합격 전략</h4>
+                     <ul class="space-y-3 list-disc list-inside text-gray-700">
+                         <li><strong class="font-bold">학업 역량의 질적 심화:</strong> 단순 고득점보다 지원 전공과 연계된 심화과목(IB HL, AP 등) 이수 및 우수 성적 확보가 중요합니다.</li>
+                         <li><strong class="font-bold">비교과 활동 '선택과 집중':</strong> 활동의 양보다 질. 자신의 진로와 리더십, 공동체 기여 등을 보여줄 수 있는 핵심 활동에 집중하세요.</li>
+                         <li><strong class="font-bold">대학별 인재상 분석:</strong> 지필 폐지, 서류 100%, 면접 반영 등 대학별로 상이한 전형을 면밀히 분석해 자신에게 가장 유리한 대학에 전략적으로 지원해야 합니다.</li>
+                     </ul>
+                 </div>
+             </div>
+        </section>
+
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="universityModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden opacity-0 p-4">
+        <div class="card w-full max-w-2xl max-h-[90vh] overflow-y-auto relative transform scale-95 transition-transform duration-300">
+            <button id="modalClose" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl">&times;</button>
+            <div id="modalContent" class="p-8">
+                <!-- Modal content will be inserted here by JS -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const universityData = {
+                '연세대': {
+                    type: '3년 특례',
+                    evaluation: '단계별 전형',
+                    stage1: '서류 100%',
+                    stage2: '서류 70% + 면접 30%',
+                    note: '면접 비중이 40%에서 30%로 감소. 서류의 영향력 증대. 언더우드국제대학은 영어 면접 폐지 및 모집단위 통합.',
+                    chartData: [70, 30],
+                    chartLabels: ['서류', '면접']
+                },
+                '성균관대': {
+                    type: '3년 특례',
+                    evaluation: '서류 100%',
+                    stage1: '서류 100%',
+                    stage2: '해당 없음',
+                    note: '반도체융합공학, 에너지학, 양자정보공학 등 첨단학과 신설 및 선발 확대. 서류의 정량/정성 평가가 매우 중요.',
+                    chartData: [100],
+                    chartLabels: ['서류']
+                },
+                '이화여대': {
+                    type: '3년 특례 (의·약학)',
+                    evaluation: '단계별 전형',
+                    stage1: '서류 100%',
+                    stage2: '면접 30% + 1단계 성적',
+                    note: '의예과, 약학, 미래산업약학 등 모집 확대. MMI(다중미니면접) 방식의 심층 면접 도입으로 인적성 평가 강화.',
+                    chartData: [70, 30],
+                    chartLabels: ['1단계 성적', '면접']
+                },
+                '동국대': {
+                    type: '3년 특례',
+                    evaluation: '서류 100%',
+                    stage1: '서류 100%',
+                    stage2: '해당 없음',
+                    note: '2026학년도부터 지필고사를 전면 폐지하고 서류 100% 전형으로 전환. 표준화학력자료의 중요성 급상승.',
+                    chartData: [100],
+                    chartLabels: ['서류']
+                },
+                 '경희대': {
+                    type: '3년 특례',
+                    evaluation: '지필고사',
+                    stage1: '인문: 국어 100% / 자연: 수학 100%',
+                    stage2: '해당 없음',
+                    note: '기존 영어 지필고사를 폐지하고 국어와 수학만으로 평가. 지필고사 준비 부담은 줄었으나 계열별 핵심 과목 집중 필요.',
+                    chartData: [100],
+                    chartLabels: ['지필고사']
+                },
+                '서울교대': {
+                    type: '12년 특례',
+                    evaluation: '면접 100%',
+                    stage1: '면접 100%',
+                    stage2: '해당 없음',
+                    note: '수능 최저학력기준을 폐지하여 지원 문턱이 낮아짐. 교직 인성 및 적성을 평가하는 심층 면접이 합격의 절대적 기준.',
+                    chartData: [100],
+                    chartLabels: ['면접']
+                }
+            };
+
+            const universityContainer = document.querySelector('#university-comparison .flex');
+            const modal = document.getElementById('universityModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalClose = document.getElementById('modalClose');
+            let chartInstance = null;
+
+            // Populate university buttons
+            Object.keys(universityData).forEach(name => {
+                const button = document.createElement('button');
+                button.className = 'px-6 py-2 bg-white text-gray-700 rounded-full shadow-sm hover:bg-gray-100 transition-colors font-semibold border border-gray-200';
+                button.textContent = name;
+                button.dataset.university = name;
+                universityContainer.appendChild(button);
+
+                button.addEventListener('click', () => {
+                    openModal(name);
+                });
+            });
+
+            function openModal(name) {
+                const data = universityData[name];
+                modalContent.innerHTML = `
+                    <h3 class="text-3xl font-bold text-gray-800 mb-2">${name}</h3>
+                    <p class="text-lg text-[#748DA6] font-semibold mb-6">${data.type} 분석</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div>
+                            <table class="w-full text-left">
+                                <tbody>
+                                    <tr class="border-b"><td class="py-2 font-semibold">전형 방식</td><td class="py-2">${data.evaluation}</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">1단계 평가</td><td class="py-2">${data.stage1}</td></tr>
+                                    ${data.stage2 !== '해당 없음' ? `<tr class="border-b"><td class="py-2 font-semibold">2단계 평가</td><td class="py-2">${data.stage2}</td></tr>` : ''}
+                                </tbody>
+                            </table>
+                            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                                <h5 class="font-bold text-gray-700">💡 주요 특징 및 전략</h5>
+                                <p class="text-sm text-gray-600 mt-2">${data.note}</p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="universityChart"></canvas>
+                        </div>
+                    </div>
+                `;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.card').classList.remove('scale-95');
+                }, 10);
+
+                const ctx = document.getElementById('universityChart').getContext('2d');
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+                chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.chartLabels,
+                        datasets: [{
+                            data: data.chartData,
+                            backgroundColor: ['#748DA6', '#9CB4CC', '#B2C8DF'],
+                            borderColor: '#FFFFFF',
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        size: 14,
+                                        family: "'Noto Sans KR', sans-serif"
+                                    },
+                                    color: '#3C3633',
+                                    boxWidth: 20,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += context.parsed + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function closeModal() {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.card').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
